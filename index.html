@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HealthyYou — Smart Health App</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f172a;
+    --accent: #06b6d4;
+    --accent2: #6366f1;
+    --muted: #94a3b8;
+    --glass-bg: linear-gradient(180deg,#e6f7fe 0%, #d8f2fb 100%);
+    --glass-fill: linear-gradient(180deg,#06b6d4,#0ea5b5);
+  }
+
+  * { box-sizing: border-box; font-family: Inter, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80") no-repeat center center/cover;
+    position: relative;
+    color: #e6eef8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.8);
+    z-index: 0;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 1150px;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 22px;
+    animation: fadeIn 1s ease-in-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card {
+    background: rgba(20, 30, 50, 0.92);
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.7); }
+
+  h1 { margin: 0 0 8px 0; font-size: 22px; font-weight: 700; }
+  p.muted { color: var(--muted); margin: 6px 0 14px 0; font-size: 13px; }
+
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Quote */
+  .quote-box {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    margin: 10px 0 18px;
+    padding: 8px 12px;
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  /* Water glass */
+  .water-glass { display: flex; gap: 12px; align-items: center; }
+  .glass {
+    width: 120px; height: 200px; position: relative;
+    border-radius: 14px; background: var(--glass-bg);
+    border: 2px solid rgba(255,255,255,0.08);
+    overflow: hidden; box-shadow: inset 0 -8px 18px rgba(0,0,0,0.3);
+  }
+  .glass .fill {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 0%; background: var(--glass-fill);
+    animation: wave 4s infinite linear;
+    transition: height 800ms cubic-bezier(.2,.9,.2,1);
+  }
+  @keyframes wave { from { background-position-x: 0; } to { background-position-x: 200px; } }
+
+  /* Meals */
+  .content { display: flex; flex-direction: column; gap: 16px; }
+  .meals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  .meal-card {
+    background: rgba(255,255,255,0.1);
+    padding: 14px; border-radius: 12px; min-height: 180px;
+    display: flex; flex-direction: column; gap: 10px;
+    backdrop-filter: blur(10px); transition: all 0.3s ease;
+    opacity: 0; animation: popIn 0.6s forwards;
+  }
+  .meal-card:hover { transform: translateY(-6px) scale(1.02); }
+
+  .meal-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; }
+  .meal-card h3 { margin: 0; font-size: 15px; }
+  .meal-actions { display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+  .pill {
+    padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,0.12);
+    font-size: 13px; cursor: pointer; transition: all 0.3s ease;
+  }
+  .pill:hover { background: linear-gradient(90deg,var(--accent),var(--accent2)); color: #fff; }
+
+  /* Right side new sections */
+  .extras {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .walk-box, .music-control {
+    padding: 16px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    text-align: center;
+    animation: slideUp 0.8s ease-in-out;
+  }
+
+  .walk-box input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: inherit;
+    width: 100px;
+    text-align: center;
+  }
+
+  .music-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .music-btn:hover { background: linear-gradient(90deg,var(--accent),var(--accent2)); transform: scale(1.05); }
+
+  @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to {opacity:1; transform:none;} }
+  @keyframes popIn { from{opacity:0; transform:scale(0.9);} to{opacity:1; transform:scale(1);} }
+  @keyframes slideUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:none;} }
+
+  @media (max-width:900px) {
+    .app { grid-template-columns: 1fr; }
+    .meals { grid-template-columns: repeat(2, 1fr); }
+    .extras { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="card sidebar">
+    <h1>HealthyYou</h1>
+    <p class="muted">Smart daily suggestions, hydration tracker & positive nudges.</p>
+
+    <h3>Water Intake</h3>
+    <div class="water-glass">
+      <div class="glass"><div class="fill" id="glassFill"></div></div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:28px;font-weight:700;" id="waterPercent">0%</div>
+          <div style="color:var(--muted);font-size:13px;">of daily goal</div>
+        </div>
+        <div class="status" id="cupsText">0 / 8 cups (250ml)</div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="pill" onclick="addCup()">+ Cup</button>
+          <button class="pill" onclick="removeCup()">- Cup</button>
+          <button class="pill" onclick="resetWater()">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="card content">
+    <div class="quote-box" id="quoteBox">Loading motivation...</div>
+    <div class="topbar"><h1 id="titleMain">Daily Health Plan</h1><p class="muted" id="todayLabel"></p></div>
+    <h3>Meals (Indian)</h3>
+    <div class="meals" id="mealsGrid"></div>
+
+    <!-- Right side extras -->
+    <div class="extras">
+      <div class="walk-box">
+        <h3>Walking Tracker</h3>
+        <p class="muted">Enter distance walked (km):</p>
+        <input type="number" id="walkInput" placeholder="e.g. 2">
+        <div style="margin-top:8px;">
+          <button class="pill" onclick="calcCalories()">Calculate</button>
+        </div>
+        <div id="caloriesResult" style="margin-top:10px;font-weight:600;"></div>
+      </div>
+
+      <div class="music-control">
+        <h3>Background Music</h3>
+        <button class="music-btn" onclick="toggleMusic()">🎵 Toggle Music</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Background music -->
+<audio id="bgMusic" loop autoplay volume="0.2">
+  <source src="https://www.bensound.com/bensound-music/bensound-relaxing.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* Quotes */
+async function fetchQuote(){
+  try {
+    const res = await fetch("https://api.quotable.io/random?tags=motivational|inspirational");
+    const data = await res.json();
+    document.getElementById("quoteBox").innerText = `"${data.content}" — ${data.author}`;
+  } catch {
+    document.getElementById("quoteBox").innerText = "Stay strong. Keep pushing forward! 🚀";
+  }
+}
+fetchQuote();
+setInterval(fetchQuote, 5*60*1000);
+
+/* Meals */
+const nutritionMock = [
+  { protein: 12, carbs: 35 },
+  { protein: 20, carbs: 50 },
+  { protein: 8, carbs: 20 },
+  { protein: 15, carbs: 45 }
+];
+let state = { meals: { breakfast:null, lunch:null, dinner:null } };
+
+document.addEventListener('DOMContentLoaded', () => { updateDateLabel(); renderMeals(); });
+
+async function getSuggestion(slot){
+  try {
+    const res = await fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a=Indian');
+    const j = await res.json();
+    const randomMeal = j.meals[Math.floor(Math.random() * j.meals.length)];
+    const detailRes = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${randomMeal.idMeal}`);
+    const detail = await detailRes.json();
+    const meal = detail.meals[0];
+    const nutri = nutritionMock[Math.floor(Math.random()*nutritionMock.length)];
+    state.meals[slot] = { name: meal.strMeal, thumb: meal.strMealThumb, protein: nutri.protein, carbs: nutri.carbs };
+    renderMeals();
+  } catch(e){ alert("Could not fetch meal"); }
+}
+
+function renderMeals(){
+  const grid = document.getElementById('mealsGrid');
+  grid.innerHTML = '';
+  ['breakfast','lunch','dinner'].forEach(slot=>{
+    const m = state.meals[slot];
+    const div = document.createElement('div');
+    div.className = 'meal-card';
+    if(m){
+      div.innerHTML = `
+        <img src="${m.thumb}" alt="${m.name}">
+        <h3>${m.name}</h3>
+        <div style="color:var(--muted);font-size:13px;">Protein: ${m.protein}g • Carbs: ${m.carbs}g</div>
+        <div class="meal-actions">
+          <div class="pill" onclick="getSuggestion('${slot}')">🔄 Refresh</div>
+          <div class="pill" onclick="removeMeal('${slot}')">Remove</div>
+        </div>`;
+    } else {
+      div.innerHTML = `<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted)">
+        <div>
+          <div style="font-weight:600;text-align:center;margin-bottom:6px">${slot.toUpperCase()}</div>
+          <div style="font-size:13px">No suggestion yet</div>
+          <div style="margin-top:8px;display:flex;gap:6px;justify-content:center">
+            <div class="pill" onclick="getSuggestion('${slot}')">Get suggestion</div>
+          </div>
+        </div></div>`;
+    }
+    grid.appendChild(div);
+  });
+}
+function removeMeal(slot){ state.meals[slot]=null; renderMeals(); }
+
+/* Date */
+function updateDateLabel(){
+  const now = new Date();
+  document.getElementById('todayLabel').innerText = now.toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' });
+}
+
+/* Water */
+let cups=0, goal=8;
+function addCup(){cups=Math.min(goal,cups+1);renderWater();}
+function removeCup(){cups=Math.max(0,cups-1);renderWater();}
+function resetWater(){cups=0;renderWater();}
+function renderWater(){
+  const percent=Math.round((cups/goal)*100);
+  document.getElementById('glassFill').style.height=percent+'%';
+  document.getElementById('waterPercent').innerText=percent+'%';
+  document.getElementById('cupsText').innerText=`${cups} / ${goal} cups (250ml)`;
+}
+renderWater();
+
+/* Walk */
+function calcCalories(){
+  const km = parseFloat(document.getElementById("walkInput").value);
+  if(isNaN(km) || km<=0){
+    document.getElementById("caloriesResult").innerText = "Please enter a valid distance.";
+    return;
+  }
+  const calories = km * 50;
+  document.getElementById("caloriesResult").innerText = `You burned approx ${calories} kcal 🌟`;
+}
+
+/* Music */
+function toggleMusic(){
+  const audio = document.getElementById("bgMusic");
+  if(audio.paused){ audio.play(); } else { audio.pause(); }
+}
+</script>
+</body>
+</html>
